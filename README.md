@@ -1,6 +1,6 @@
 # IFT-1004 Travaux pratiques
 
-### Session automne 2018
+### Session automne 2018, Ulaval
 
 ## Auteurs
 - Nicholas Langevin
