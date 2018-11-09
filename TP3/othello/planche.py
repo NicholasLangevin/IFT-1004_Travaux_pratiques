@@ -29,7 +29,7 @@ class Planche:
         Returns:
             La pièce à cette position s'il y en a une, None autrement.
         """
-        pass
+        return self.cases[position]
 
     def position_valide(self, position):
         """
@@ -41,7 +41,10 @@ class Planche:
         Returns:
             True si la position est valide, False autrement
         """
-        pass
+        if position[0] >= 0 and position[0] <= 8:
+            if position[1] >= 0 and position[1] <= 8:
+                return True
+        return False        
 
     def obtenir_positions_mangees(self, position, couleur):
         """
