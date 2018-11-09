@@ -103,7 +103,41 @@ class Planche:
         Returns:
             La liste (peut-être vide) de toutes les positions mangées à partir du coup et de la direction donnés.
         """
-        pass
+
+        def valeur_next_case(look_pos):
+            """ 
+            Indique si une case se fait manger. 
+            
+            Args:
+               look_pos: Possition de la case à regarder.
+
+            Returns:
+                 True si la pièce ce fait manger, False autrement           
+            """
+            
+            # La case est vide
+            if look_pos not in self.cases:
+                return False
+            # La possition n'est pas une case du jeu
+            elif not self.position_valide(look_pos):
+                return False           
+            # La couleur de la piece est la même que la pièce initial
+            elif couleur != self.cases[look_pos].couleur:
+                return False
+            # Autrement, la case contient une pièce de couleur adverse 
+            return True 
+
+        liste_pos_mangee = []
+        next_pos = [position[0] + direction[0], position[1] + direction[1]]
+
+        # Tant que des pièces se font manger, on continu dans la même direction.
+        while valeur_next_case(next_pos):
+            liste_pos_mangee.append(next_pos)
+            next_pos = [next_pos[0] + direction[0], next_pos[1] + direction[1]]
+        
+        return liste_pos_mangee
+
+                 
 
     def coup_est_possible(self, position, couleur):
         """
