@@ -29,7 +29,7 @@ class Planche:
         Returns:
             La pièce à cette position s'il y en a une, None autrement.
         """
-        return self.cases[position]
+        return self.cases[position] if position in self.cases else None
 
     def position_valide(self, position):
         """
@@ -41,6 +41,7 @@ class Planche:
         Returns:
             True si la position est valide, False autrement
         """
+        # TODO est ce que la position est considéré valide si une pièce est deja la ???
         if position[0] >= 0 and position[0] <= 8:
             if position[1] >= 0 and position[1] <= 8:
                 return True
@@ -122,18 +123,19 @@ class Planche:
             elif not self.position_valide(look_pos):
                 return False           
             # La couleur de la piece est la même que la pièce initial
-            elif couleur != self.cases[look_pos].couleur:
+            elif self.cases[look_pos].couleur == couleur:
                 return False
             # Autrement, la case contient une pièce de couleur adverse 
-            return True 
+            else:
+                return True 
 
         liste_pos_mangee = []
-        next_pos = [position[0] + direction[0], position[1] + direction[1]]
+        next_pos = (position[0] + direction[0], position[1] + direction[1])
 
         # Tant que des pièces se font manger, on continu dans la même direction.
         while valeur_next_case(next_pos):
             liste_pos_mangee.append(next_pos)
-            next_pos = [next_pos[0] + direction[0], next_pos[1] + direction[1]]
+            next_pos = (next_pos[0] + direction[0], next_pos[1] + direction[1])
         
         return liste_pos_mangee
 
@@ -150,7 +152,14 @@ class Planche:
         Returns:
             True, si le coup est valide, False sinon
         """
-        pass
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                if i == 0 and j == 0:
+                    continue
+                if self.obtenir_positions_mangees_direction(couleur, (i, j), position) != []:
+                    return True
+        return False
+                
 
     def lister_coups_possibles_de_couleur(self, couleur):
         """
