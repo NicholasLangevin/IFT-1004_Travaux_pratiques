@@ -42,8 +42,8 @@ class Planche:
             True si la position est valide, False autrement
         """
         # TODO est ce que la position est considéré valide si une pièce est deja la ???
-        if position[0] >= 0 and position[0] <= 8:
-            if position[1] >= 0 and position[1] <= 8:
+        if position[0] >= 0 and position[0] <= 7:
+            if position[1] >= 0 and position[1] <= 7:
                 return True
         return False        
 
@@ -104,40 +104,30 @@ class Planche:
         Returns:
             La liste (peut-être vide) de toutes les positions mangées à partir du coup et de la direction donnés.
         """
+        pos_manger = []
+        pos_tester = (position[0] + direction[0], position[1] + direction[1])
+        continuer = True
 
-        def valeur_next_case(look_pos):
-            """ 
-            Indique si une case se fait manger. 
-            
-            Args:
-               look_pos: Possition de la case à regarder.
+        while True:
 
-            Returns:
-                 True si la pièce ce fait manger, False autrement           
-            """
-            
-            # La case est vide
-            if look_pos not in self.cases:
-                return False
+            if pos_tester not in self.cases:
+                return []
             # La possition n'est pas une case du jeu
-            elif not self.position_valide(look_pos):
-                return False           
+            elif not self.position_valide(pos_tester):
+                return []
             # La couleur de la piece est la même que la pièce initial
-            elif self.cases[look_pos].couleur == couleur:
-                return False
-            # Autrement, la case contient une pièce de couleur adverse 
+            elif self.cases[pos_tester].couleur == couleur:
+                return pos_manger
             else:
-                return True 
+                pos_manger.append(pos_tester)
 
-        liste_pos_mangee = []
-        next_pos = (position[0] + direction[0], position[1] + direction[1])
-
-        # Tant que des pièces se font manger, on continu dans la même direction.
-        while valeur_next_case(next_pos):
-            liste_pos_mangee.append(next_pos)
-            next_pos = (next_pos[0] + direction[0], next_pos[1] + direction[1])
+            pos_tester = (pos_tester[0] + direction[0], pos_tester[1] + direction[1])
         
-        return liste_pos_mangee
+
+
+        
+
+        
 
                  
 

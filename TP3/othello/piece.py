@@ -46,6 +46,6 @@ class Piece:
         Faire un print(une_piece) affichera un caractère unicode représentant le dessin d'une pièce.
         """
         if self.est_noir():
-            return "\u2580"#"\u26C0"
+            return "N"#"\u26C0"
         else:
-            return "\u26C2"
+            return "B"#"\u26C2"
