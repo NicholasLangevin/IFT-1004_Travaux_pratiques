@@ -141,7 +141,7 @@ class Planche:
         Returns:
             True, si le coup est valide, False sinon
         """
-        if len(self.obtenir_positions_mangees) == 0:
+        if len(self.obtenir_positions_mangees(position, couleur)) == 0:
             return False
         else:
             return True
@@ -187,7 +187,14 @@ class Planche:
         Returns:
             "ok" si le déplacement a été effectué car il est valide, "erreur" autrement.
         """
-        pass
+        if self.coup_est_possible(position, couleur):
+            self.cases[position] = Piece(couleur)
+            for pos_manger in self.obtenir_positions_mangees(position, couleur):
+                self.cases[pos_manger].echange_couleur()
+
+            return "ok"
+        else:
+            return "erreur"
 
     def convertir_en_chaine(self):
         """
@@ -200,7 +207,14 @@ class Planche:
         Returns:
             La chaîne de caractères.
         """
-        pass
+        save_planche = ""
+        for i in range(0,8):
+            for j in range(0,8):
+                if (i,j) in self.cases:
+                    save_planche += str(i) + "," + str(j) + "," + self.cases[(i,j)].couleur + "\n"
+                
+        return save_planche
+
 
     def charger_dune_chaine(self, chaine):
         """
@@ -211,7 +225,12 @@ class Planche:
         Args:
             chaine: La chaîne de caractères, un string.
         """
-        pass
+        self.cases.clear()
+        case_remplie = chaine.split("\n")[:-1] # Retient tout seuf le dernier string qui est un sting vide
+        for case in case_remplie:
+            pos = (int(case[0]), int(case[2]))
+            col = case[4:] 
+            self.cases[pos] = Piece(col)
 
     def initialiser_planche_par_default(self):
         """
