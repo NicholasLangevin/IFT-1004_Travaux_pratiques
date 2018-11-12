@@ -72,7 +72,14 @@ class Planche:
         Returns:
             une liste contenant toutes les positions qui seraient mangées par le coup.
         """
-        pass
+        piece_manger = []
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                if i == 0 and j == 0:
+                    continue
+                else:
+                    piece_manger += self.obtenir_positions_mangees_direction(couleur, [i, j], position) 
+        return piece_manger
 
     def obtenir_positions_mangees_direction(self, couleur, direction, position):
         """
@@ -106,7 +113,6 @@ class Planche:
         """
         pos_manger = []
         pos_tester = (position[0] + direction[0], position[1] + direction[1])
-        continuer = True
 
         while True:
 
@@ -122,14 +128,7 @@ class Planche:
                 pos_manger.append(pos_tester)
 
             pos_tester = (pos_tester[0] + direction[0], pos_tester[1] + direction[1])
-        
-
-
-        
-
-        
-
-                 
+                  
 
     def coup_est_possible(self, position, couleur):
         """
@@ -142,13 +141,10 @@ class Planche:
         Returns:
             True, si le coup est valide, False sinon
         """
-        for i in [-1, 0, 1]:
-            for j in [-1, 0, 1]:
-                if i == 0 and j == 0:
-                    continue
-                if self.obtenir_positions_mangees_direction(couleur, (i, j), position) != []:
-                    return True
-        return False
+        if len(self.obtenir_positions_mangees) == 0:
+            return False
+        else:
+            return True
                 
 
     def lister_coups_possibles_de_couleur(self, couleur):
@@ -164,7 +160,13 @@ class Planche:
         Returns:
             Une liste de positions de coups possibles pour la couleur "couleur"
         """
-        pass
+        coup_possible = []
+        for i in range(0,8):
+            for j in range(0,8):
+                if self.coup_est_possible((i,j),couleur):
+                    coup_possible.append((i,j))
+        
+        return coup_possible
 
     def jouer_coup(self, position, couleur):
         """
