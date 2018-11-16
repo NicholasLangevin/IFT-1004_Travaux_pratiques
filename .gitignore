@@ -1,0 +1,3 @@
+# .gitignore pour ACT-2003
+.DS_Store
+*.pyc
