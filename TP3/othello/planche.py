@@ -41,7 +41,6 @@ class Planche:
         Returns:
             True si la position est valide, False autrement
         """
-        # TODO est ce que la position est considéré valide si une pièce est deja la ???
         if position[0] >= 0 and position[0] <= 7:
             if position[1] >= 0 and position[1] <= 7:
                 return True
