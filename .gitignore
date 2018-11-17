@@ -1,4 +1,5 @@
 # .gitignore pour ACT-2003
 .DS_Store
 *.pyc
+TP3/.DS_Store
 TP3/othello/__pycache__
