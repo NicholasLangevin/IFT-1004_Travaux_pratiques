@@ -1,3 +1,4 @@
+# coding=utf-8
 from random import choice
 
 
@@ -67,8 +68,12 @@ class JoueurHumain(Joueur):
             un couple (ligne, colonne) représentant la position du coup désiré.
         """
         try:
-            # Votre code doit être ici, entre try: et except
-            pass
+            ligne = int(input("à quelle ligne désirez vous jouer? :"))
+            colonne = int(input("à quelle colonne désirez vous jouer? :"))
+            assert (ligne, colonne) in coups_possibles
+            coup_desire = (ligne, colonne)
+
+            return coup_desire
 
         except ValueError:
             print("Position invalide.\n")
@@ -105,4 +110,14 @@ class JoueurOrdinateur(Joueur):
         Returns:
             un couple (ligne, colonne) représentant la position du coup désiré.
         """
-        pass
+        coup_choisi = choice(coups_possibles)
+        return coup_choisi
+
+
+# vincent_joueur = JoueurHumain("noir")
+# print(vincent_joueur.couleur)
+# print(vincent_joueur.obtenir_type_joueur())
+# vincent_joueur.choisir_coup([(2, 3), (3, 3), (4, 5)])
+# computer_poubelle = JoueurOrdinateur("blanc")
+# print(computer_poubelle.obtenir_type_joueur())
+# print(computer_poubelle.choisir_coup([(2, 4), (7, 5), (3, 4)]))

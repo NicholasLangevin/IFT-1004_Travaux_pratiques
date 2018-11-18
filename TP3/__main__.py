@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Module principal du package othello. C'est ce module que nous allons exécuter pour démarrer votre jeu.
 """

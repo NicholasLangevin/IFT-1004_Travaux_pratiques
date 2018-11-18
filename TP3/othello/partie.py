@@ -1,5 +1,7 @@
+# coding=utf-8
 from othello.planche import Planche
 from othello.joueur import JoueurOrdinateur, JoueurHumain
+
 
 class Partie:
     def __init__(self, nom_fichier=None):
@@ -35,11 +37,13 @@ class Partie:
 
     def initialiser_joueurs(self):
         """
-        On initialise ici trois attributs : joueur_noir, joueur_noir et joueur_courant (initialisé à joueur_noir).
+        On initialise ici trois attributs : joueur_noir, joueur_blanc et joueur_courant (initialisé à joueur_noir).
 
         Pour créer les objets joueur, faites appel à demander_type_joueur()
         """
-        pass
+        self.joueur_noir = self.demander_type_joueur("noir")
+        self.joueur_blanc = self.demander_type_joueur("blanc")
+        self.joueur_courant = self.joueur_noir
 
     def demander_type_joueur(self, couleur):
         """
@@ -56,7 +60,16 @@ class Partie:
             Un objet Joueur, de type JoueurHumain si l'usager a entré 'Humain', JoueurOrdinateur s'il a entré
             'Ordinateur'.
         """
-        pass
+        type_desire = input("""Quel type de joueur désirez vous associé à la couleur ({}) ? Les choix possibles sont: 
+        "Humain" ou "Ordinateur" """.format(couleur))
+
+        if type_desire == "Humain" or type_desire == "Ordinateur":
+            pass
+
+        else:
+            self.demander_type_joueur(couleur)
+
+        return self.creer_joueur(type_desire, couleur)
 
     def creer_joueur(self, type, couleur):
         """
@@ -72,8 +85,14 @@ class Partie:
         Returns:
             Un objet JoueurHumain si le type est "Humain", JoueurOrdinateur sinon
         """
-        pass
+        joueur_cree = ""
+        if type == "Humain":
+            joueur_cree = JoueurHumain(couleur)
 
+        elif type == "Ordinateur":
+            joueur_cree = JoueurOrdinateur(couleur)
+
+        return joueur_cree
 
     def valider_position_coup(self, position_coup):
         """
@@ -98,7 +117,29 @@ class Partie:
             Un couple où le premier élément représente la validité de la position (True ou False), et le
             deuxième élément est un éventuel message d'erreur.
         """
-        pass
+
+        validite_position = True
+        message_erreur = ""
+        self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
+
+        if not self.planche.position_valide(position_coup):
+            validite_position = False
+            message_erreur = "Le coup tenté ne représente pas une position valide de la planche de jeu."
+            return validite_position, message_erreur
+
+        elif self.planche.get_piece(position_coup) is not None:
+            validite_position = False
+            message_erreur = "Une pièce se trouve déjà à la position souhaitée."
+            return validite_position, message_erreur
+
+        elif position_coup not in self.coups_possibles:
+            validite_position = False
+            message_erreur = "Le coup ne fait pas partie de la liste des coups valides"
+            return validite_position, message_erreur
+
+        else:
+            return validite_position, message_erreur
+
 
     def tour(self):
         """
@@ -114,21 +155,44 @@ class Partie:
         ***Vous disposez d'une méthode pour demander le coup à l'usager dans cette classe et la classe planche
         possède à son tour une méthode pour jouer un coup, utilisez-les !***
         """
-        pass
+        position_demande = self.joueur_courant.choisir_coup(self.coups_possibles)
+        if not self.valider_position_coup(position_demande)[0]:
+            message_de_validation = self.valider_position_coup(position_demande)
+            print(message_de_validation[1])
+            self.tour()
+
+        coup_jouer = self.planche.jouer_coup(position_demande, self.couleur_joueur_courant)
+
+        if coup_jouer == "ok":
+            pass
+
+        else:
+            print(coup_jouer)
 
     def passer_tour(self):
         """
         Affiche un message indiquant que le joueur de la couleur courante ne peut jouer avec l'état actuel de la
         planche et qu'il doit donc passer son tour.
         """
-        pass
+        print("Le joueur de couleur {} n'a aucun coup disponible,"
+              " il doit donc passer son tour.".format(self.couleur_joueur_courant))
+
 
     def partie_terminee(self):
         """
         Détermine si la partie est terminée, Une partie est terminée si toutes les cases de la planche sont remplies
         ou si deux tours consécutifs ont été passés (pensez à l'attribut self.deux_tours_passes).
         """
-        pass
+
+        partie_terminee = False
+
+        if len(self.planche.cases) == 64:
+            partie_terminee = True
+
+        if self.deux_tours_passes:
+            partie_terminee = True
+
+        return partie_terminee
 
     def determiner_gagnant(self):
         """
@@ -138,7 +202,29 @@ class Partie:
         Affichez un message indiquant la couleur gagnante ainsi que le nombre de pièces de sa couleur ou encore
         un message annonçant un match nul, le cas échéant.
         """
-        pass
+        chaine = self.planche.convertir_en_chaine()
+        chaine_en_liste = chaine.split("\n")[:-1]
+        compteur_blanc = 0
+        compteur_noir = 0
+
+        i = 0
+        while i <= len(chaine_en_liste) - 1:
+            if chaine_en_liste[i][4:] == "noir":
+                compteur_noir += 1
+            elif chaine_en_liste[i][4:] == "blanc":
+                compteur_blanc += 1
+            i += 1
+
+        if compteur_noir < compteur_blanc :
+            message_gagnant = "le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
+
+        elif compteur_blanc < compteur_noir:
+            message_gagnant = "le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
+
+        else:
+            message_gagnant = "Aucun gagnant, c'est une match nul"
+
+        print(message_gagnant)
 
     def jouer(self):
         """
@@ -159,7 +245,50 @@ class Partie:
         5) Lorsque la partie est terminée, afficher un message mentionnant le résultat de la partie. Vous avez une
            fonction à implémenter que vous pourriez tout simplement appeler.
         """
-        pass
+        partie_en_cour = True
+        while partie_en_cour:
+            block = "inactif"
+            print(self.planche)
+            print("Joueur de couleur {}, c'est ton tour à jouer".format(self.couleur_joueur_courant))
+            self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
+
+            if len(self.coups_possibles) > 0:
+                self.tour()
+                self.tour_precedent_passe = False
+
+            if len(self.coups_possibles) == 0:
+                self.passer_tour()
+
+                if self.tour_precedent_passe:
+                    self.deux_tours_passes = True
+
+                elif not self.tour_precedent_passe:
+                    self.tour_precedent_passe = True
+
+
+            '''
+            if self.joueur_courant == JoueurHumain(self.couleur_joueur_courant):
+
+                if self.couleur_joueur_courant == "noir":
+                    self.couleur_joueur_courant = "blanc"
+
+                elif self.couleur_joueur_courant == "blanc":
+                    self.couleur_joueur_courant = "noir"
+
+                self.joueur_courant = JoueurOrdinateur(self.couleur_joueur_courant)
+                block = "actif"
+
+            if self.joueur_courant == JoueurOrdinateur(self.couleur_joueur_courant) and block != "actif":
+
+                if self.couleur_joueur_courant == "noir":
+                    self.couleur_joueur_courant = "blanc"
+
+                elif self.couleur_joueur_courant == "blanc":
+                    self.couleur_joueur_courant = "noir"
+
+                self.joueur_courant = JoueurHumain(self.couleur_joueur_courant)
+            '''
+
 
     def sauvegarder(self, nom_fichier):
         """
@@ -179,7 +308,16 @@ class Partie:
         Args:
             nom_fichier: Le nom du fichier où sauvegarder, un string.
         """
-        pass
+        partie_sauvegarde = open(nom_fichier, 'w')
+
+        partie_sauvegarde.write(self.couleur_joueur_courant)
+        partie_sauvegarde.write(str(self.tour_precedent_passe))
+        partie_sauvegarde.write(str(self.deux_tours_passes))
+        partie_sauvegarde.write(self.joueur_blanc.obtenir_type_joueur())
+        partie_sauvegarde.write(self.joueur_noir.obtenir_type_joueur())
+        partie_sauvegarde.write(self.planche.convertir_en_chaine())
+
+        partie_sauvegarde.close()
 
     def charger(self, nom_fichier):
         """
@@ -188,4 +326,16 @@ class Partie:
         Args:
             nom_fichier: Le nom du fichier à charger, un string.
         """
-        pass
+        partie_charge = open(nom_fichier, 'r')
+
+        self.couleur_joueur_courant = partie_charge.readline()
+        self.tour_precedent_passe = eval(partie_charge.readline())
+        self.deux_tours_passes = eval(partie_charge.readline())
+        self.joueur_blanc = self.creer_joueur(partie_charge.readline(), "blanc")
+        self.joueur_noir = self.creer_joueur(partie_charge.readline(), "noir")
+        planche_a_charger = partie_charge.readline()
+        self.planche = self.planche.convertir_en_chaine(planche_a_charger)
+
+        partie_charge.close()
+
+

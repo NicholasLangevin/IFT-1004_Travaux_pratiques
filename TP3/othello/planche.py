@@ -1,3 +1,4 @@
+# coding=utf-8
 from othello.piece import Piece
 
 

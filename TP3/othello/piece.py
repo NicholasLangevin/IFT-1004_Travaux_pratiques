@@ -1,3 +1,4 @@
+# coding=utf-8
 class Piece:
     """
     Classe modélisant une pièce d'un jeu d'Othello.
