@@ -215,7 +215,6 @@ class Planche:
                 
         return save_planche
 
-
     def charger_dune_chaine(self, chaine):
         """
         Remplit la planche à partir d'une chaîne de caractères comportant l'information d'une pièce sur chaque ligne.

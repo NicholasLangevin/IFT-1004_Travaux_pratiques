@@ -13,19 +13,19 @@ print(chaine)
 chaine_en_liste = chaine.split("\n")[:-1]
 print(chaine_en_liste)
 print(chaine_en_liste[0][4:])
-compteur_blanc = 0
-compteur_noir = 0
-i = 0
-while i <= len(chaine_en_liste) - 1:
-    if chaine_en_liste[i][4:] == "noir":
-        compteur_noir += 1
-    elif chaine_en_liste[i][4:] == "blanc":
-        compteur_blanc += 1
-    i += 1
-print(compteur_blanc)
-print(compteur_noir)
+# compteur_blanc = 0
+# compteur_noir = 0
+# i = 0
+# while i <= len(chaine_en_liste) - 1:
+#     if chaine_en_liste[i][4:] == "noir":
+#         compteur_noir += 1
+#     elif chaine_en_liste[i][4:] == "blanc":
+#         compteur_blanc += 1
+#     i += 1
+# print(compteur_blanc)
+# print(compteur_noir)
 
-x = 3, 5, 5
+# x = 3, 5, 5
 
 #
 # planche_de_jeu.jouer_coup((5,5), "blanc")

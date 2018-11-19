@@ -265,7 +265,7 @@ class Partie:
                     self.tour_precedent_passe = True
 
 
-            '''
+
             if self.joueur_courant == JoueurHumain(self.couleur_joueur_courant):
 
                 if self.couleur_joueur_courant == "noir":
@@ -286,7 +286,7 @@ class Partie:
                     self.couleur_joueur_courant = "noir"
 
                 self.joueur_courant = JoueurHumain(self.couleur_joueur_courant)
-            '''
+
 
 
     def sauvegarder(self, nom_fichier):
@@ -318,6 +318,7 @@ class Partie:
 
         partie_sauvegarde.close()
 
+
     def charger(self, nom_fichier):
         """
         Charge une partie dans à partir d'un fichier. Le fichier a le même format que la méthode de sauvegarde.
@@ -332,9 +333,13 @@ class Partie:
         self.deux_tours_passes = eval(partie_charge.readline())
         self.joueur_blanc = self.creer_joueur(partie_charge.readline(), "blanc")
         self.joueur_noir = self.creer_joueur(partie_charge.readline(), "noir")
-        planche_a_charger = partie_charge.readline()
-        self.planche = self.planche.convertir_en_chaine(planche_a_charger)
 
+        char_planche = ""
+        while partie_charge.readline() != "":
+            char_planche = char_planche + partie_charge.readline()
+
+        self.planche = self.planche.charger_dune_chaine(char_planche)
         partie_charge.close()
+
 
 
