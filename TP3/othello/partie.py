@@ -84,11 +84,10 @@ class Partie:
         Returns:
             Un objet JoueurHumain si le type est "Humain", JoueurOrdinateur sinon
         """
-        joueur_cree = ""
         if type == "Humain":
             joueur_cree = JoueurHumain(couleur)
 
-        elif type == "Ordinateur":
+        else:
             joueur_cree = JoueurOrdinateur(couleur)
 
         return joueur_cree
@@ -119,25 +118,21 @@ class Partie:
 
         validite_position = True
         message_erreur = ""
-        self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
+        # self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
 
         if not self.planche.position_valide(position_coup):
             validite_position = False
             message_erreur = "Le coup tenté ne représente pas une position valide de la planche de jeu."
-            return validite_position, message_erreur
 
         elif self.planche.get_piece(position_coup) is not None:
             validite_position = False
             message_erreur = "Une pièce se trouve déjà à la position souhaitée."
-            return validite_position, message_erreur
 
         elif position_coup not in self.coups_possibles:
             validite_position = False
             message_erreur = "Le coup ne fait pas partie de la liste des coups valides"
-            return validite_position, message_erreur
 
-        else:
-            return validite_position, message_erreur
+        return validite_position, message_erreur
 
 
     def tour(self):
@@ -156,17 +151,14 @@ class Partie:
         """
         position_demande = self.joueur_courant.choisir_coup(self.coups_possibles)
         if not self.valider_position_coup(position_demande)[0]:
-            message_de_validation = self.valider_position_coup(position_demande)
-            print(message_de_validation[1])
+            message_erreur = self.valider_position_coup(position_demande)
+            print(message_erreur[1])
             self.tour()
 
         coup_jouer = self.planche.jouer_coup(position_demande, self.couleur_joueur_courant)
 
-        if coup_jouer == "ok":
-            pass
-
-        else:
-            print(coup_jouer)
+        if coup_jouer == "erreur":
+            print("Le déplacement n'a pas été effectuer car il n'est pas valide.")
 
     def passer_tour(self):
         """
@@ -255,7 +247,7 @@ class Partie:
                 self.tour()
                 self.tour_precedent_passe = False
 
-            if len(self.coups_possibles) == 0:
+            elif len(self.coups_possibles) == 0:
                 self.passer_tour()
 
                 if self.tour_precedent_passe:
@@ -266,26 +258,49 @@ class Partie:
 
 
 
-            if self.joueur_courant == JoueurHumain(self.couleur_joueur_courant):
 
-                if self.couleur_joueur_courant == "noir":
-                    self.couleur_joueur_courant = "blanc"
+            
 
-                elif self.couleur_joueur_courant == "blanc":
-                    self.couleur_joueur_courant = "noir"
 
-                self.joueur_courant = JoueurOrdinateur(self.couleur_joueur_courant)
-                block = "actif"
 
-            if self.joueur_courant == JoueurOrdinateur(self.couleur_joueur_courant) and block != "actif":
 
-                if self.couleur_joueur_courant == "noir":
-                    self.couleur_joueur_courant = "blanc"
+            # Changement de couleur
+            if self.couleur_joueur_courant == "noir":
+                self.couleur_joueur_courant = "blanc"
+            elif self.couleur_joueur_courant == "blanc":
+                self.couleur_joueur_courant = "noir"
 
-                elif self.couleur_joueur_courant == "blanc":
-                    self.couleur_joueur_courant = "noir"
+            # Changement de type
+            if self.joueur_courant.obtenir_type_joueur() == "humain":
 
-                self.joueur_courant = JoueurHumain(self.couleur_joueur_courant)
+
+                
+
+
+
+            # if self.joueur_courant == JoueurHumain(self.couleur_joueur_courant):
+
+            #     if self.couleur_joueur_courant == "noir":
+            #         self.couleur_joueur_courant = "blanc"
+
+            #     elif self.couleur_joueur_courant == "blanc":
+            #         self.couleur_joueur_courant = "noir"
+
+            #     self.joueur_courant = JoueurOrdinateur(self.couleur_joueur_courant)
+            #     block = "actif"
+
+            # if self.joueur_courant == JoueurOrdinateur(self.couleur_joueur_courant) and block != "actif":
+
+            #     if self.couleur_joueur_courant == "noir":
+            #         self.couleur_joueur_courant = "blanc"
+
+            #     elif self.couleur_joueur_courant == "blanc":
+            #         self.couleur_joueur_courant = "noir"
+
+            #     self.joueur_courant = JoueurHumain(self.couleur_joueur_courant)
+
+
+            self.partie_terminee()
 
 
 
