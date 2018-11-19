@@ -236,9 +236,8 @@ class Partie:
         5) Lorsque la partie est terminée, afficher un message mentionnant le résultat de la partie. Vous avez une
            fonction à implémenter que vous pourriez tout simplement appeler.
         """
-        partie_en_cour = True
-        while partie_en_cour:
-            block = "inactif"
+
+        while not self.partie_terminee():
             print(self.planche)
             print("Joueur de couleur {}, c'est ton tour à jouer".format(self.couleur_joueur_courant))
             self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
@@ -258,49 +257,16 @@ class Partie:
 
 
 
-
-            
-
-
-
-
-            # Changement de couleur
-            if self.couleur_joueur_courant == "noir":
+            if self.joueur_courant == self.joueur_noir:
+                self.joueur_courant = self.joueur_blanc
                 self.couleur_joueur_courant = "blanc"
-            elif self.couleur_joueur_courant == "blanc":
+
+            elif self.joueur_courant == self.joueur_blanc:
+                self.joueur_courant = self.joueur_noir
                 self.couleur_joueur_courant = "noir"
 
-            # Changement de type
-            if self.joueur_courant.obtenir_type_joueur() == "humain":
+        self.determiner_gagnant()
 
-
-                
-
-
-
-            # if self.joueur_courant == JoueurHumain(self.couleur_joueur_courant):
-
-            #     if self.couleur_joueur_courant == "noir":
-            #         self.couleur_joueur_courant = "blanc"
-
-            #     elif self.couleur_joueur_courant == "blanc":
-            #         self.couleur_joueur_courant = "noir"
-
-            #     self.joueur_courant = JoueurOrdinateur(self.couleur_joueur_courant)
-            #     block = "actif"
-
-            # if self.joueur_courant == JoueurOrdinateur(self.couleur_joueur_courant) and block != "actif":
-
-            #     if self.couleur_joueur_courant == "noir":
-            #         self.couleur_joueur_courant = "blanc"
-
-            #     elif self.couleur_joueur_courant == "blanc":
-            #         self.couleur_joueur_courant = "noir"
-
-            #     self.joueur_courant = JoueurHumain(self.couleur_joueur_courant)
-
-
-            self.partie_terminee()
 
 
 
