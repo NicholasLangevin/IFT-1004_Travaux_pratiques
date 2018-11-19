@@ -64,12 +64,11 @@ class Partie:
         "Humain" ou "Ordinateur" """.format(couleur))
 
         if type_desire == "Humain" or type_desire == "Ordinateur":
-            pass
+            return self.creer_joueur(type_desire, couleur)
 
         else:
             self.demander_type_joueur(couleur)
 
-        return self.creer_joueur(type_desire, couleur)
 
     def creer_joueur(self, type, couleur):
         """
