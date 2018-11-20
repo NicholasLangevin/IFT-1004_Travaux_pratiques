@@ -159,7 +159,6 @@ class Partie:
         if coup_jouer == "erreur":
             print("Le déplacement n'a pas été effectuer car il n'est pas valide.")
 
-
     def passer_tour(self):
         """
         Affiche un message indiquant que le joueur de la couleur courante ne peut jouer avec l'état actuel de la
@@ -251,8 +250,6 @@ class Partie:
                 elif not self.tour_precedent_passe:
                     self.tour_precedent_passe = True
 
-
-
             if self.joueur_courant == self.joueur_noir:
                 self.joueur_courant = self.joueur_blanc
                 self.couleur_joueur_courant = "blanc"
@@ -261,13 +258,9 @@ class Partie:
                 self.joueur_courant = self.joueur_noir
                 self.couleur_joueur_courant = "noir"
 
-
         # Print la planche final et annonce le gagnant
         print(self.planche)
         self.determiner_gagnant()
-
-
-
 
     def sauvegarder(self, nom_fichier):
         """
@@ -326,7 +319,7 @@ class Partie:
             char_planche = char_planche + char_ajouter
             char_ajouter = partie_charge.readline()
 
-        self.planche = self.planche.charger_dune_chaine(char_planche)
+        self.planche.charger_dune_chaine(char_planche)
         partie_charge.close()
 
 
