@@ -1,0 +1,9 @@
+noir
+False
+False
+Ordinateur
+Ordinateur
+3,3,blanc
+3,4,noir
+4,3,noir
+4,4,blanc

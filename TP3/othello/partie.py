@@ -289,11 +289,11 @@ class Partie:
         """
         partie_sauvegarde = open(nom_fichier, 'w')
 
-        partie_sauvegarde.write(self.couleur_joueur_courant)
-        partie_sauvegarde.write(str(self.tour_precedent_passe))
-        partie_sauvegarde.write(str(self.deux_tours_passes))
-        partie_sauvegarde.write(self.joueur_blanc.obtenir_type_joueur())
-        partie_sauvegarde.write(self.joueur_noir.obtenir_type_joueur())
+        partie_sauvegarde.write(self.couleur_joueur_courant + "\n")
+        partie_sauvegarde.write(str(self.tour_precedent_passe) + "\n")
+        partie_sauvegarde.write(str(self.deux_tours_passes) + "\n")
+        partie_sauvegarde.write(self.joueur_blanc.obtenir_type_joueur() + "\n")
+        partie_sauvegarde.write(self.joueur_noir.obtenir_type_joueur() + "\n")
         partie_sauvegarde.write(self.planche.convertir_en_chaine())
 
         partie_sauvegarde.close()
@@ -308,15 +308,23 @@ class Partie:
         """
         partie_charge = open(nom_fichier, 'r')
 
-        self.couleur_joueur_courant = partie_charge.readline()
+        self.couleur_joueur_courant = partie_charge.readline().strip("\n")
         self.tour_precedent_passe = eval(partie_charge.readline())
         self.deux_tours_passes = eval(partie_charge.readline())
-        self.joueur_blanc = self.creer_joueur(partie_charge.readline(), "blanc")
-        self.joueur_noir = self.creer_joueur(partie_charge.readline(), "noir")
+        self.joueur_blanc = self.creer_joueur(partie_charge.readline().strip("\n"), "blanc")
+        self.joueur_noir = self.creer_joueur(partie_charge.readline().strip("\n"), "noir")
+
+        if self.couleur_joueur_courant == "blanc":
+            self.joueur_courant = self.joueur_blanc
+
+        elif self.couleur_joueur_courant == "noir":
+            self.joueur_courant = self.joueur_noir
 
         char_planche = ""
-        while partie_charge.readline() != "":
-            char_planche = char_planche + partie_charge.readline()
+        char_ajouter = partie_charge.readline()
+        while char_ajouter != "":
+            char_planche = char_planche + char_ajouter
+            char_ajouter = partie_charge.readline()
 
         self.planche = self.planche.charger_dune_chaine(char_planche)
         partie_charge.close()
