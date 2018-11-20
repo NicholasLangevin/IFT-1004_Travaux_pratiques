@@ -3,3 +3,4 @@
 *.pyc
 TP3/.DS_Store
 TP3/othello/__pycache__
+.DS_Store 
