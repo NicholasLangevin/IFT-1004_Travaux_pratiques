@@ -163,8 +163,9 @@ class Planche:
         coup_possible = []
         for i in range(0,8):
             for j in range(0,8):
-                if self.coup_est_possible((i,j),couleur):
-                    coup_possible.append((i,j))
+                if (i, j) not in self.cases:
+                    if self.coup_est_possible((i,j),couleur):
+                        coup_possible.append((i,j))
         
         return coup_possible
 

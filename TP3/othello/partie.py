@@ -118,13 +118,12 @@ class Partie:
 
         validite_position = True
         message_erreur = ""
-        # self.coups_possibles = self.planche.lister_coups_possibles_de_couleur(self.couleur_joueur_courant)
 
         if not self.planche.position_valide(position_coup):
             validite_position = False
             message_erreur = "Le coup tenté ne représente pas une position valide de la planche de jeu."
 
-        elif self.planche.get_piece(position_coup) is not None:
+        elif position_coup in self.planche.cases:
             validite_position = False
             message_erreur = "Une pièce se trouve déjà à la position souhaitée."
 
@@ -159,7 +158,7 @@ class Partie:
 
         if coup_jouer == "erreur":
             print("Le déplacement n'a pas été effectuer car il n'est pas valide.")
-            
+
 
     def passer_tour(self):
         """
@@ -178,7 +177,7 @@ class Partie:
 
         partie_terminee = False
 
-        if len(self.planche.cases) == 64:
+        if len(self.planche.cases) >= 64:
             partie_terminee = True
 
         if self.deux_tours_passes:
@@ -194,24 +193,20 @@ class Partie:
         Affichez un message indiquant la couleur gagnante ainsi que le nombre de pièces de sa couleur ou encore
         un message annonçant un match nul, le cas échéant.
         """
-        chaine = self.planche.convertir_en_chaine()
-        chaine_en_liste = chaine.split("\n")[:-1]
         compteur_blanc = 0
         compteur_noir = 0
-
-        i = 0
-        while i <= len(chaine_en_liste) - 1:
-            if chaine_en_liste[i][4:] == "noir":
+        for piece in self.planche.cases.values():
+            if piece.est_noir():
                 compteur_noir += 1
-            elif chaine_en_liste[i][4:] == "blanc":
+            elif piece.est_blanc:
                 compteur_blanc += 1
-            i += 1
+        
 
         if compteur_noir < compteur_blanc :
-            message_gagnant = "le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
+            message_gagnant = "Le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
 
         elif compteur_blanc < compteur_noir:
-            message_gagnant = "le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
+            message_gagnant = "Le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
 
         else:
             message_gagnant = "Aucun gagnant, c'est une match nul"
@@ -266,6 +261,9 @@ class Partie:
                 self.joueur_courant = self.joueur_noir
                 self.couleur_joueur_courant = "noir"
 
+
+        # Print la planche final et annonce le gagnant
+        print(self.planche)
         self.determiner_gagnant()
 
 

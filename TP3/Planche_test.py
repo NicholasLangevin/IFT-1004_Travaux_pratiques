@@ -1,18 +1,23 @@
 from othello.planche import Planche
+from othello.planche import Piece
 import ast
 
 planche_de_jeu = Planche()
 print(planche_de_jeu)
 
-planche_de_jeu.jouer_coup((5,4), "noir")
-print(planche_de_jeu)
+for col in planche_de_jeu.cases.values():
+    print(col.est_noir())
 
 
-chaine = planche_de_jeu.convertir_en_chaine()
-print(chaine)
-chaine_en_liste = chaine.split("\n")[:-1]
-print(chaine_en_liste)
-print(chaine_en_liste[0][4:])
+# planche_de_jeu.jouer_coup((5,4), "noir")
+# print(planche_de_jeu)
+
+
+# chaine = planche_de_jeu.convertir_en_chaine()
+# print(chaine)
+# chaine_en_liste = chaine.split("\n")[:-1]
+# print(chaine_en_liste)
+# print(chaine_en_liste[0][4:])
 # compteur_blanc = 0
 # compteur_noir = 0
 # i = 0
