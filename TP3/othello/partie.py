@@ -159,6 +159,7 @@ class Partie:
 
         if coup_jouer == "erreur":
             print("Le déplacement n'a pas été effectuer car il n'est pas valide.")
+            
 
     def passer_tour(self):
         """
