@@ -70,10 +70,6 @@ class JoueurHumain(Joueur):
         try:
             ligne = int(input("à quelle ligne désirez vous jouer? :"))
             colonne = int(input("à quelle colonne désirez vous jouer? :"))
-            if (ligne, colonne) not in coups_possibles:
-                self.choisir_coup(coups_possibles)
-            else:
-                return (ligne, colonne)
 
         except ValueError:
             print("Position invalide.\n")
@@ -81,8 +77,13 @@ class JoueurHumain(Joueur):
             # L'usager a fait une erreur de saisie, on retourne donc un coup que l'on sait invalide.
             # Ceci forcera le programme à redemander le coup au joueur.
             return (-1, -1)
-
-
+        else:
+            if (ligne, colonne)  in coups_possibles:
+                    return (ligne, colonne)
+            else:
+                print("Position invalide.\n")
+                print("")
+                return (-1, -1)
 
 
 class JoueurOrdinateur(Joueur):
@@ -112,8 +113,7 @@ class JoueurOrdinateur(Joueur):
         Returns:
             un couple (ligne, colonne) représentant la position du coup désiré.
         """
-        coup_choisi = choice(coups_possibles)
-        return coup_choisi
+        return choice(coups_possibles)
 
 
 # vincent_joueur = JoueurHumain("noir")
