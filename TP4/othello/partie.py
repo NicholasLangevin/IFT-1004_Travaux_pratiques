@@ -39,9 +39,9 @@ class Partie:
 
         Pour créer les objets joueur, faites appel à demander_type_joueur()
         """
-        self.joueur_noir = self.demander_type_joueur("noir")
+        self.joueur_noir = self.creer_joueur('Humain', 'noir')
 
-        self.joueur_blanc = self.demander_type_joueur("blanc")
+        self.joueur_blanc = self.creer_joueur('Humain', 'blanc')
 
         self.joueur_courant = self.joueur_noir
 
@@ -110,6 +110,7 @@ class Partie:
             return False, "Position coup invalide: une pièce se trouve déjà à cette positon."
 
         if position_coup not in self.coups_possibles:
+            print("TB:{}".format(self.coups_possibles))
             return False, "Position coup invalide: cette pièce ne peut pas faire de prise."
 
         return True, None

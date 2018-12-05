@@ -12,8 +12,11 @@ class Interphace_Othello(Tk):
 		super().__init__()
 		self.title("Jeu de othello")
 
+		# Initialisation de la partie
+		self.partie_othello = Partie()
+
 		# Création de la planche de jeux
-		self.canvas_othello = Planche_de_jeu(self, 100)
+		self.canvas_othello = Planche_de_jeu(self, 100, self.partie_othello.planche)
 		self.canvas_othello.grid()
 
 		# Pour le redimentionnement
@@ -23,15 +26,11 @@ class Interphace_Othello(Tk):
 		self.messages = Label(self)
 		self.messages.grid()
 
-		self.erreur_position_coup = ErreurPositionCoup(self)
-
-		# self.message_erreur_utilisateur = ErreurPositionCoup(self)
-
 		# Lien entre le click et la méthode poser_piece()
 		self.canvas_othello.bind('<Button-1>', self.jouer_piece)
 
-		# Initialisation de la partie
-		self.partie_othello = Partie()
+
+		self.erreur_position_coup = ErreurPositionCoup(self, self.partie_othello)
 
 		# Temporaire afficher le joueur courent
 		self.messages['text'] = self.partie_othello.couleur_joueur_courant
@@ -49,38 +48,41 @@ class Interphace_Othello(Tk):
 		position = (ligne, colonne)
 
 		# Selectionne la couleur de la piece, si piece il y a
-		if position in self.canvas_othello.cases:
-			couleur = self.canvas_othello.cases[position].couleur
+		if position in self.canvas_othello.planche.cases:
+			couleur = self.canvas_othello.planche.cases[position].couleur
 		else:
 			couleur = None
 
-		if self.canvas_othello.position_valide(position):
+		if self.canvas_othello.planche.position_valide(position):
 			return position, couleur
 		else:
 			return None, None # Si la position n'est pas valide, il n'y a pas de couleur.
 
 	def jouer_piece(self, event):
-		#TODO gestion des erreurs
+
 
 		pos, couleur_case = self.get_info_case(event)
 
-		if pos != None and couleur_case == None:
-			coup_terminer = self.canvas_othello.jouer_coup(pos, self.partie_othello.couleur_joueur_courant)
+		self.partie_othello.coups_possibles = self.partie_othello.planche.lister_coups_possibles_de_couleur(self.partie_othello.couleur_joueur_courant)
+
+
+		# if pos != None and couleur_case == None:
+		if self.erreur_position_coup.message_erreur_approprie(pos):
+			coup_terminer = self.canvas_othello.planche.jouer_coup(pos, self.partie_othello.couleur_joueur_courant)
 			
 			if coup_terminer == "ok":
 				self.canvas_othello.delete('piece')
 				self.canvas_othello.dessiner_piece()
 
-			if self.partie_othello.joueur_courant.couleur == "blanc":
+			if self.partie_othello.couleur_joueur_courant == "blanc":
 				self.partie_othello.joueur_courant = self.partie_othello.joueur_noir
 				self.partie_othello.couleur_joueur_courant = "noir"
 			else:
 				self.partie_othello.joueur_courant = self.partie_othello.joueur_blanc
 				self.partie_othello.couleur_joueur_courant = "blanc"
 
-		else:
-			self.erreur_position_coup.message_erreur_approprie(pos)
-
+		# else:
+		# 	self.erreur_position_coup.message_erreur_approprie(pos)
 		self.messages['text'] = self.partie_othello.couleur_joueur_courant
 
 	def verifier_partie(self):
@@ -135,15 +137,15 @@ class Interphace_Othello(Tk):
 
 
 
-class Planche_de_jeu(Canvas, Planche):
+class Planche_de_jeu(Canvas):
 	""" Classe représentant le canvas de la planche de jeu """
 
-	def __init__(self, parent, nb_pixels_par_case):
+	def __init__(self, parent, nb_pixels_par_case, planche):
         # Héritage de Planche(from othello)
-		Planche.__init__(self)
+		self.planche = planche
 		
-		self.nb_lignes = self.nb_cases
-		self.nb_colonnes = self.nb_cases
+		self.nb_lignes = self.planche.nb_cases
+		self.nb_colonnes = self.planche.nb_cases
 		
 		self.chiffre_lignes = [0, 1, 2, 3, 4, 5, 6, 7] 	
 		self.chiffre_colonnes = [0, 1, 2, 3, 4, 5, 6, 7] 
@@ -170,12 +172,12 @@ class Planche_de_jeu(Canvas, Planche):
 
 		caracteres_pieces = {'noir': '\u26C2', 'blanc': '\u26C0'}
 
-		for pos in self.cases.keys():
+		for pos in self.planche.cases.keys():
 
 			coord_x = pos[1] * self.nb_pixels_par_case + self.nb_pixels_par_case // 2
 			coord_y = pos[0] * self.nb_pixels_par_case + self.nb_pixels_par_case // 2
 
-			couleur_piece = self.cases[pos].couleur
+			couleur_piece = self.planche.cases[pos].couleur
 
 			# Création des pièces
 			self.create_text(coord_x, coord_y, text=caracteres_pieces[couleur_piece],
