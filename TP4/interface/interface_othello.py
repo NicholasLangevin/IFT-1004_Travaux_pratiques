@@ -1,10 +1,10 @@
-import tkinter as tk  
+from tkinter import Tk, Label, Canvas, messagebox
 from othello.planche import Planche
 from othello.piece import Piece
 from othello.partie import Partie
+from othello.exceptions import ErreurPositionCoup
 
-
-class Interphace_Othello(tk.Tk):
+class Interphace_Othello(Tk):
 	""" Classe de l'interphace graphique du jeu othello """
 
 	def __init__(self):
@@ -14,14 +14,18 @@ class Interphace_Othello(tk.Tk):
 
 		# Création de la planche de jeux
 		self.canvas_othello = Planche_de_jeu(self, 100)
-		self.canvas_othello.grid(sticky=tk.NSEW)
+		self.canvas_othello.grid()
 
 		# Pour le redimentionnement
 		self.grid_columnconfigure(0, weight=1)
 		self.grid_rowconfigure(0, weight=1)
 
-		self.messages = tk.Label(self)
+		self.messages = Label(self)
 		self.messages.grid()
+
+		self.erreur_position_coup = ErreurPositionCoup(self)
+
+		# self.message_erreur_utilisateur = ErreurPositionCoup(self)
 
 		# Lien entre le click et la méthode poser_piece()
 		self.canvas_othello.bind('<Button-1>', self.jouer_piece)
@@ -31,7 +35,6 @@ class Interphace_Othello(tk.Tk):
 
 		# Temporaire afficher le joueur courent
 		self.messages['text'] = self.partie_othello.couleur_joueur_courant
-
 
 	def get_info_case(self, event):
 		"""
@@ -44,7 +47,6 @@ class Interphace_Othello(tk.Tk):
 		ligne = event.y // self.canvas_othello.nb_pixels_par_case
 		colonne = event.x // self.canvas_othello.nb_pixels_par_case
 		position = (ligne, colonne)
-
 
 		# Selectionne la couleur de la piece, si piece il y a
 		if position in self.canvas_othello.cases:
@@ -59,7 +61,6 @@ class Interphace_Othello(tk.Tk):
 
 	def jouer_piece(self, event):
 		#TODO gestion des erreurs
-
 
 		pos, couleur_case = self.get_info_case(event)
 
@@ -77,12 +78,64 @@ class Interphace_Othello(tk.Tk):
 				self.partie_othello.joueur_courant = self.partie_othello.joueur_blanc
 				self.partie_othello.couleur_joueur_courant = "blanc"
 
+		else:
+			self.erreur_position_coup.message_erreur_approprie(pos)
+
 		self.messages['text'] = self.partie_othello.couleur_joueur_courant
 
-			
+	def verifier_partie(self):
+		message_partie = ""
+		situation_partie = False
+		if self.partie_othello.partie_terminee():
+			compteur_blanc = self.partie_othello.determiner_gagnant()[0]
+			compteur_noir = self.partie_othello.determiner_gagnant()[1]
+			if compteur_noir < compteur_blanc:
+				message_partie = "Le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
+				situation_partie = True
+
+			elif compteur_blanc < compteur_noir:
+				message_partie = "Le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
+				situation_partie = True
+
+			else:
+				message_partie = "Aucun gagnant, c'est une match nul"
+				situation_partie = True
+
+		return message_partie, situation_partie
+
+	def passer_tour_message(self):
+		message_tour = ""
+		if len(self.planche.lister_coups_possibles_de_couleur(self.partie_othello.couleur_joueur_courant)) == 0:
+			message_tour = "Aucun coup possible est disponible, vous devez passer votre tour"
+
+			if self.partie_othello.tour_precedent_passe:
+				self.partie_othello.deux_tours_passes = True
+
+			else:
+				self.partie_othello.tour_precedent_passe = True
+
+		else:
+			self.partie_othello.tour_precedent_passe = False
+
+		return message_tour
+
+	def generateur_message_partie(self):
+
+		if self.passer_tour_message() != "":
+			messagebox.showinfo("Information pour le joueur courant", self.passer_tour_message())
+
+			if self.verifier_partie()[1]:
+				messagebox.showinfo("Partie terminée", self.verifier_partie()[0])
+				question_rejouabilite = messagebox.askyesno("Recommencer", "Désirez-vous faire une autre partie?")
+				if question_rejouabilite:
+					Interphace_Othello()
+
+				elif not question_rejouabilite:
+					self.quit()
 
 
-class Planche_de_jeu(tk.Canvas, Planche):
+
+class Planche_de_jeu(Canvas, Planche):
 	""" Classe représentant le canvas de la planche de jeu """
 
 	def __init__(self, parent, nb_pixels_par_case):
@@ -97,11 +150,8 @@ class Planche_de_jeu(tk.Canvas, Planche):
 
 		self.nb_pixels_par_case = nb_pixels_par_case
 
-		# Héritage de Cancas(from tkinter)
-		super().__init__(parent, width=self.nb_lignes * nb_pixels_par_case,
-                                 height=self.nb_colonnes * nb_pixels_par_case)
-
-
+		# Héritage de Canvas(from tkinter)
+		super().__init__(parent, width=self.nb_lignes * nb_pixels_par_case, height=self.nb_colonnes * nb_pixels_par_case)
 		self.bind('<Configure>', self.redimensionner)
 
 	def dessiner_cases(self):
@@ -121,18 +171,15 @@ class Planche_de_jeu(tk.Canvas, Planche):
 		caracteres_pieces = {'noir': '\u26C2', 'blanc': '\u26C0'}
 
 		for pos in self.cases.keys():
-			
-			
+
 			coord_x = pos[1] * self.nb_pixels_par_case + self.nb_pixels_par_case // 2
 			coord_y = pos[0] * self.nb_pixels_par_case + self.nb_pixels_par_case // 2
 
 			couleur_piece = self.cases[pos].couleur
-			
 
 			# Création des pièces
 			self.create_text(coord_x, coord_y, text=caracteres_pieces[couleur_piece],
-                             font=('Deja Vu', self.nb_pixels_par_case//2), tags='piece')
-
+							 font=('Deja Vu', self.nb_pixels_par_case//2), tags='piece')
 
 	def redimensionner(self, event):
 		nouvelle_taille = min(event.width, event.height)
@@ -145,8 +192,4 @@ class Planche_de_jeu(tk.Canvas, Planche):
 		self.delete('piece')
 		self.dessiner_piece()
 
-class Frame(tk.Frame):
-	pass
 
-class Menu(tk.Menu):
-	pass

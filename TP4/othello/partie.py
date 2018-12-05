@@ -168,11 +168,6 @@ class Partie:
         Affichez un message indiquant la couleur gagnante ainsi que le nombre de pièces de sa couleur ou encore
         un message annonçant un match nul, le cas échéant.
         """
-        assert self.partie_terminee(), "obtenir_gagnant(): La partie n'est pas encore terminée !"
-
-        print()
-        print(self.planche)
-        print()
 
         n_blancs, n_noirs = 0, 0
         for _, p in self.planche.cases.items():
@@ -181,15 +176,7 @@ class Partie:
             else:
                 n_noirs += 1
 
-        print("------------------------------------------------------")
-        print("Partie terminée!")
-
-        if n_blancs == n_noirs:
-            print("Match nul !")
-        elif n_blancs > n_noirs:
-            print("Le gagnant est le joueur blanc avec", n_blancs, "pièces !")
-        else:
-            print("Le gagnant est le joueur noir avec", n_noirs, "pièces!")
+        return n_blancs, n_noirs
 
     def jouer(self):
         """
