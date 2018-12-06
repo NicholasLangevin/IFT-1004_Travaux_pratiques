@@ -110,7 +110,6 @@ class Partie:
             return False, "Position coup invalide: une pièce se trouve déjà à cette positon."
 
         if position_coup not in self.coups_possibles:
-            print("TB:{}".format(self.coups_possibles))
             return False, "Position coup invalide: cette pièce ne peut pas faire de prise."
 
         return True, None

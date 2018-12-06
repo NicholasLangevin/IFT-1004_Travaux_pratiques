@@ -18,12 +18,11 @@ class ErreurPositionCoup():
         validation_coup = self.partie_othello.valider_position_coup(coup_desire)
 
         if not validation_coup[0]:
-            print(validation_coup)
             self.message_erreur = validation_coup[1]
             messagebox.showerror("Erreur", self.message_erreur, parent=self.interface)
             is_message = False
         return is_message
-            
+
 
 
         

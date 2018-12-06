@@ -7,13 +7,13 @@ from othello.exceptions import ErreurPositionCoup
 class Interphace_Othello(Tk):
 	""" Classe de l'interphace graphique du jeu othello """
 
-	def __init__(self):
+	def __init__(self, nom_fichier=None):
 	
 		super().__init__()
 		self.title("Jeu de othello")
 
 		# Initialisation de la partie
-		self.partie_othello = Partie()
+		self.partie_othello = Partie(nom_fichier)
 
 		# Création de la planche de jeux
 		self.canvas_othello = Planche_de_jeu(self, 100, self.partie_othello.planche)
@@ -33,40 +33,46 @@ class Interphace_Othello(Tk):
 		self.erreur_position_coup = ErreurPositionCoup(self, self.partie_othello)
 
 		# Temporaire afficher le joueur courent
-		self.messages['text'] = self.partie_othello.couleur_joueur_courant
+		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
+
+		if self.nb_prochain_tour_valide() == 'deux':
+			self.Message_fin_de_partie()
+		elif self.nb_prochain_tour_valide() in ('noir', 'blanc'):
+			messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))
+			self.changer_joueur()
+
+		# Temporaire afficher le joueur courent
+		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
+
+
 
 	def get_info_case(self, event):
-		"""
 		
-		return
-			possition: position si une position du jeux, none autrement 
-			couleur: couleur de la piece dans la case, none autrement 
-
-		"""
 		ligne = event.y // self.canvas_othello.nb_pixels_par_case
 		colonne = event.x // self.canvas_othello.nb_pixels_par_case
-		position = (ligne, colonne)
+		return (ligne, colonne)
 
-		# Selectionne la couleur de la piece, si piece il y a
-		if position in self.canvas_othello.planche.cases:
-			couleur = self.canvas_othello.planche.cases[position].couleur
-		else:
-			couleur = None
+		# # Selectionne la couleur de la piece, si piece il y a
+		# if position in self.canvas_othello.planche.cases:
+		# 	couleur = self.canvas_othello.planche.cases[position].couleur
+		# else:
+		# 	couleur = None
 
-		if self.canvas_othello.planche.position_valide(position):
-			return position, couleur
-		else:
-			return None, None # Si la position n'est pas valide, il n'y a pas de couleur.
+		# if self.canvas_othello.planche.position_valide(position):
+		# 	return position, couleur
+		# else:
+		# 	return None, None # Si la position n'est pas valide, il n'y a pas de couleur.
+
+
 
 	def jouer_piece(self, event):
 
-
-		pos, couleur_case = self.get_info_case(event)
+		
+		pos = self.get_info_case(event)
 
 		self.partie_othello.coups_possibles = self.partie_othello.planche.lister_coups_possibles_de_couleur(self.partie_othello.couleur_joueur_courant)
 
 
-		# if pos != None and couleur_case == None:
 		if self.erreur_position_coup.message_erreur_approprie(pos):
 			coup_terminer = self.canvas_othello.planche.jouer_coup(pos, self.partie_othello.couleur_joueur_courant)
 			
@@ -74,66 +80,69 @@ class Interphace_Othello(Tk):
 				self.canvas_othello.delete('piece')
 				self.canvas_othello.dessiner_piece()
 
-			if self.partie_othello.couleur_joueur_courant == "blanc":
+			if self.nb_prochain_tour_valide() == 'deux':
+				self.partie_othello.deux_tours_passes = True
+			elif self.nb_prochain_tour_valide() in ('noir', 'blanc'):
+					messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))				
+			else:
+				self.changer_joueur()
+
+			if self.partie_othello.partie_terminee():
+				self.Message_fin_de_partie()
+
+		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
+
+	def nb_prochain_tour_valide(self):
+		joueur_skip = "Aucun"
+		
+		coup_blanc = self.partie_othello.planche.lister_coups_possibles_de_couleur('blanc')
+		coup_noir = self.partie_othello.planche.lister_coups_possibles_de_couleur('noir')
+		if len(coup_blanc) == 0 and len(coup_noir) == 0:
+			joueur_skip = 'deux'
+		elif len(coup_blanc) == 0:
+			joueur_skip = 'blanc'
+		elif len(coup_noir) == 0:
+			joueur_skip = 'noir'
+
+		print('N:{}'.format(coup_noir))
+		print('B:{}'.format(coup_blanc))
+		print('joueur_skip:{}'.format(joueur_skip))
+
+		return joueur_skip
+
+	def changer_joueur(self):
+		if self.partie_othello.couleur_joueur_courant == "blanc":
 				self.partie_othello.joueur_courant = self.partie_othello.joueur_noir
 				self.partie_othello.couleur_joueur_courant = "noir"
-			else:
-				self.partie_othello.joueur_courant = self.partie_othello.joueur_blanc
-				self.partie_othello.couleur_joueur_courant = "blanc"
+		else:
+			self.partie_othello.joueur_courant = self.partie_othello.joueur_blanc
+			self.partie_othello.couleur_joueur_courant = "blanc"
+	
 
-		# else:
-		# 	self.erreur_position_coup.message_erreur_approprie(pos)
-		self.messages['text'] = self.partie_othello.couleur_joueur_courant
+	def Message_fin_de_partie(self):
 
-	def verifier_partie(self):
-		message_partie = ""
-		situation_partie = False
-		if self.partie_othello.partie_terminee():
-			compteur_blanc = self.partie_othello.determiner_gagnant()[0]
-			compteur_noir = self.partie_othello.determiner_gagnant()[1]
-			if compteur_noir < compteur_blanc:
-				message_partie = "Le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
-				situation_partie = True
+		compteur_blanc, compteur_noir = self.partie_othello.determiner_gagnant()
+		if compteur_noir < compteur_blanc:
+			message_partie = "Le joueur blanc est le gagnant avec {} pièces".format(compteur_blanc)
 
-			elif compteur_blanc < compteur_noir:
-				message_partie = "Le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
-				situation_partie = True
-
-			else:
-				message_partie = "Aucun gagnant, c'est une match nul"
-				situation_partie = True
-
-		return message_partie, situation_partie
-
-	def passer_tour_message(self):
-		message_tour = ""
-		if len(self.planche.lister_coups_possibles_de_couleur(self.partie_othello.couleur_joueur_courant)) == 0:
-			message_tour = "Aucun coup possible est disponible, vous devez passer votre tour"
-
-			if self.partie_othello.tour_precedent_passe:
-				self.partie_othello.deux_tours_passes = True
-
-			else:
-				self.partie_othello.tour_precedent_passe = True
+		elif compteur_blanc < compteur_noir:
+			message_partie = "Le joueur noir est le gagnant avec {} pièces".format(compteur_noir)
 
 		else:
-			self.partie_othello.tour_precedent_passe = False
+			message_partie = "Aucun gagnant, c'est une match nul"
 
-		return message_tour
+		messagebox.showinfo('Fin de partie',message_partie)
+		nouvelle_partie = messagebox.askyesno("Recommencer", "Désirez-vous faire une autre partie?")
+		if nouvelle_partie:
+			self.recommencer_nouvelle_partie()
+		else:
+			self.quit()
 
-	def generateur_message_partie(self):
-
-		if self.passer_tour_message() != "":
-			messagebox.showinfo("Information pour le joueur courant", self.passer_tour_message())
-
-			if self.verifier_partie()[1]:
-				messagebox.showinfo("Partie terminée", self.verifier_partie()[0])
-				question_rejouabilite = messagebox.askyesno("Recommencer", "Désirez-vous faire une autre partie?")
-				if question_rejouabilite:
-					Interphace_Othello()
-
-				elif not question_rejouabilite:
-					self.quit()
+	def recommencer_nouvelle_partie(self):
+		self.partie_othello.planche.initialiser_planche_par_default()
+		self.partie_othello.deux_tours_passes = False
+		self.canvas_othello.dessiner_cases()
+		self.canvas_othello.dessiner_piece()
 
 
 
