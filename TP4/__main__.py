@@ -18,5 +18,5 @@ if __name__ == '__main__':
     # Démarrage de cette partie.
     # partie.jouer()
 
-    app = Interphace_Othello('partie_deux_tours_a_passer.txt')
+    app = Interphace_Othello('partie_un_tour_a_passer.txt')
     app.mainloop()

@@ -29,19 +29,18 @@ class Interphace_Othello(Tk):
 		# Lien entre le click et la méthode poser_piece()
 		self.canvas_othello.bind('<Button-1>', self.jouer_piece)
 
-
+		# Création de la classe exeption
 		self.erreur_position_coup = ErreurPositionCoup(self, self.partie_othello)
 
-		# Temporaire afficher le joueur courent
-		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
-
+	
+		# Vérification d'initiation de partie
 		if self.nb_prochain_tour_valide() == 'deux':
 			self.Message_fin_de_partie()
 		elif self.nb_prochain_tour_valide() in ('noir', 'blanc'):
 			messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))
 			self.changer_joueur()
 
-		# Temporaire afficher le joueur courent
+		# Affiche le premier joueur à jouer (sera mit à jour plus tard)
 		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
 
 
@@ -51,18 +50,6 @@ class Interphace_Othello(Tk):
 		ligne = event.y // self.canvas_othello.nb_pixels_par_case
 		colonne = event.x // self.canvas_othello.nb_pixels_par_case
 		return (ligne, colonne)
-
-		# # Selectionne la couleur de la piece, si piece il y a
-		# if position in self.canvas_othello.planche.cases:
-		# 	couleur = self.canvas_othello.planche.cases[position].couleur
-		# else:
-		# 	couleur = None
-
-		# if self.canvas_othello.planche.position_valide(position):
-		# 	return position, couleur
-		# else:
-		# 	return None, None # Si la position n'est pas valide, il n'y a pas de couleur.
-
 
 
 	def jouer_piece(self, event):
@@ -103,10 +90,6 @@ class Interphace_Othello(Tk):
 			joueur_skip = 'blanc'
 		elif len(coup_noir) == 0:
 			joueur_skip = 'noir'
-
-		print('N:{}'.format(coup_noir))
-		print('B:{}'.format(coup_blanc))
-		print('joueur_skip:{}'.format(joueur_skip))
 
 		return joueur_skip
 
