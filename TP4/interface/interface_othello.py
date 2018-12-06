@@ -69,10 +69,14 @@ class Interphace_Othello(Tk):
 
 			if self.nb_prochain_tour_valide() == 'deux':
 				self.partie_othello.deux_tours_passes = True
-			elif self.nb_prochain_tour_valide() in ('noir', 'blanc'):
-					messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))				
-			else:
+			elif self.nb_prochain_tour_valide() == 'aucun':
 				self.changer_joueur()
+			elif self.nb_prochain_tour_valide() == self.partie_othello.couleur_joueur_courant:
+				messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))
+				self.changer_joueur()
+			elif self.nb_prochain_tour_valide() != self.partie_othello.couleur_joueur_courant:
+					messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))	
+			
 
 			if self.partie_othello.partie_terminee():
 				self.Message_fin_de_partie()
@@ -80,7 +84,7 @@ class Interphace_Othello(Tk):
 		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
 
 	def nb_prochain_tour_valide(self):
-		joueur_skip = "Aucun"
+		joueur_skip = "aucun"
 		
 		coup_blanc = self.partie_othello.planche.lister_coups_possibles_de_couleur('blanc')
 		coup_noir = self.partie_othello.planche.lister_coups_possibles_de_couleur('noir')
