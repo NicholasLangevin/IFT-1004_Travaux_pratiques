@@ -1,6 +1,7 @@
 from tkinter import Tk, Label, Canvas, messagebox
 from othello.partie import Partie
 from othello.exceptions import ErreurPositionCoup
+import sys
 
 
 class InterphaceOthello(Tk):
@@ -58,6 +59,7 @@ class InterphaceOthello(Tk):
 			self.canvas_othello.delete('piece')
 			self.canvas_othello.dessiner_piece()
 
+			# Gestion des tours
 			if self.nb_prochain_tour_valide() == 'deux':
 				self.partie_othello.deux_tours_passes = True
 			elif self.nb_prochain_tour_valide() == 'aucun':
@@ -71,8 +73,8 @@ class InterphaceOthello(Tk):
 			if self.partie_othello.partie_terminee():
 				self.Message_fin_de_partie()
 
-		except ErreurPositionCoup as e:
-			messagebox.showerror("Erreur", e)
+		except ErreurPositionCoup as message:
+			messagebox.showerror("Erreur", message)
 
 		finally:
 			self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
@@ -80,6 +82,7 @@ class InterphaceOthello(Tk):
 	def nb_prochain_tour_valide(self):
 		joueur_skip = "aucun"
 		
+		# Valide si au moins un des 2 prochains coups est valide
 		coup_blanc = self.partie_othello.planche.lister_coups_possibles_de_couleur('blanc')
 		coup_noir = self.partie_othello.planche.lister_coups_possibles_de_couleur('noir')
 		if len(coup_blanc) == 0 and len(coup_noir) == 0:
@@ -119,7 +122,7 @@ class InterphaceOthello(Tk):
 		if nouvelle_partie:
 			self.recommencer_nouvelle_partie()
 		else:
-			self.quit()
+			sys.exit()
 
 	# reinitialise l'interface et des paramètre pour une nouvelle partie
 	def recommencer_nouvelle_partie(self):
