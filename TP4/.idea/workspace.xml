@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d5c004de-8688-4d46-9443-3be5d4023743" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/interface/interface_othello.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/interface_othello.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/othello/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/othello/exceptions.py" afterDir="false" />
-    </list>
+    <list default="true" id="d5c004de-8688-4d46-9443-3be5d4023743" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
