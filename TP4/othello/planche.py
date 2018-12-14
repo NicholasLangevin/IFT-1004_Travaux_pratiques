@@ -2,7 +2,6 @@ from othello.piece import Piece
 
 from itertools import product
 
-
 class Planche:
     """
     Classe représentant la planche d'un jeu d'Othello.
@@ -127,6 +126,7 @@ class Planche:
         :param couleur: La couleur du coup évalué
         :return: True, si le coup est valide, False sinon
         """
+
         return len(self.obtenir_positions_mangees(position, couleur)) > 0 and position not in self.cases.keys()
 
     def lister_coups_possibles_de_couleur(self, couleur):

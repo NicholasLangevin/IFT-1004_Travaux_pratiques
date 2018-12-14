@@ -29,8 +29,6 @@ class Interphace_Othello(Tk):
 		# Lien entre le click et la méthode poser_piece()
 		self.canvas_othello.bind('<Button-1>', self.jouer_piece)
 
-		# Création de la classe exeption
-		self.erreur_position_coup = ErreurPositionCoup(self, self.partie_othello)
 
 	
 		# Vérification d'initiation de partie
@@ -51,21 +49,15 @@ class Interphace_Othello(Tk):
 		colonne = event.x // self.canvas_othello.nb_pixels_par_case
 		return (ligne, colonne)
 
-
 	def jouer_piece(self, event):
 
-		
 		pos = self.get_info_case(event)
-
 		self.partie_othello.coups_possibles = self.partie_othello.planche.lister_coups_possibles_de_couleur(self.partie_othello.couleur_joueur_courant)
-
-
-		if self.erreur_position_coup.message_erreur_approprie(pos):
-			coup_terminer = self.canvas_othello.planche.jouer_coup(pos, self.partie_othello.couleur_joueur_courant)
-			
-			if coup_terminer == "ok":
-				self.canvas_othello.delete('piece')
-				self.canvas_othello.dessiner_piece()
+		try:
+			self.partie_othello.valider_position_coup(pos)
+			self.canvas_othello.planche.jouer_coup(pos, self.partie_othello.couleur_joueur_courant)
+			self.canvas_othello.delete('piece')
+			self.canvas_othello.dessiner_piece()
 
 			if self.nb_prochain_tour_valide() == 'deux':
 				self.partie_othello.deux_tours_passes = True
@@ -77,11 +69,14 @@ class Interphace_Othello(Tk):
 			elif self.nb_prochain_tour_valide() != self.partie_othello.couleur_joueur_courant:
 					messagebox.showinfo("Info","Le joueur {} passe sont tour".format(self.nb_prochain_tour_valide()))	
 			
-
 			if self.partie_othello.partie_terminee():
 				self.Message_fin_de_partie()
 
-		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
+		except ErreurPositionCoup as e:
+			messagebox.showerror("Erreur", e)
+
+		finally:
+			self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
 
 	def nb_prochain_tour_valide(self):
 		joueur_skip = "aucun"
@@ -118,7 +113,7 @@ class Interphace_Othello(Tk):
 		else:
 			message_partie = "Aucun gagnant, c'est une match nul"
 
-		messagebox.showinfo('Fin de partie',message_partie)
+		messagebox.showinfo('Fin de partie', message_partie)
 		nouvelle_partie = messagebox.askyesno("Recommencer", "Désirez-vous faire une autre partie?")
 		if nouvelle_partie:
 			self.recommencer_nouvelle_partie()
@@ -137,7 +132,7 @@ class Planche_de_jeu(Canvas):
 	""" Classe représentant le canvas de la planche de jeu """
 
 	def __init__(self, parent, nb_pixels_par_case, planche):
-        # Héritage de Planche(from othello)
+		# Héritage de Planche(from othello)
 		self.planche = planche
 		
 		self.nb_lignes = self.planche.nb_cases

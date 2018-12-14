@@ -1,5 +1,6 @@
 from othello.planche import Planche
 from othello.joueur import JoueurOrdinateur, JoueurHumain
+from othello.exceptions import ErreurPositionCoup
 
 class Partie:
     def __init__(self, nom_fichier=None):
@@ -103,16 +104,13 @@ class Partie:
         :return: Un couple où le premier élément représente la validité de la position (True ou False), et le
                  deuxième élément est un éventuel message d'erreur.
         """
-        if not self.planche.position_valide(position_coup):
-            return False, "Position coup invalide: La position entrée est à l'extérieur de la planche de jeu."
-
         if position_coup in self.planche.cases.keys():
-            return False, "Position coup invalide: une pièce se trouve déjà à cette positon."
+            raise ErreurPositionCoup("Position coup invalide: une pièce se trouve déjà à cette positon.")
 
         if position_coup not in self.coups_possibles:
-            return False, "Position coup invalide: cette pièce ne peut pas faire de prise."
+            raise ErreurPositionCoup("Position coup invalide: cette pièce ne peut pas faire de prise.")
 
-        return True, None
+        return None, None
 
     def tour(self):
         """
