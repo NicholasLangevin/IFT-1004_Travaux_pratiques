@@ -1,10 +1,9 @@
 from tkinter import Tk, Label, Canvas, messagebox
-from othello.planche import Planche
-from othello.piece import Piece
 from othello.partie import Partie
 from othello.exceptions import ErreurPositionCoup
 
-class Interphace_Othello(Tk):
+
+class InterphaceOthello(Tk):
 	""" Classe de l'interphace graphique du jeu othello """
 
 	def __init__(self, nom_fichier=None):
@@ -23,14 +22,13 @@ class Interphace_Othello(Tk):
 		self.grid_columnconfigure(0, weight=1)
 		self.grid_rowconfigure(0, weight=1)
 
+		# Message indiquant en bas du plateau à qui le tour
 		self.messages = Label(self)
 		self.messages.grid()
 
 		# Lien entre le click et la méthode poser_piece()
 		self.canvas_othello.bind('<Button-1>', self.jouer_piece)
 
-
-	
 		# Vérification d'initiation de partie
 		if self.nb_prochain_tour_valide() == 'deux':
 			self.Message_fin_de_partie()
@@ -41,14 +39,15 @@ class Interphace_Othello(Tk):
 		# Affiche le premier joueur à jouer (sera mit à jour plus tard)
 		self.messages['text'] = 'C\'est au joueur {} de jouer'.format(self.partie_othello.couleur_joueur_courant)
 
-
-
+	# fonction pour savoir la case relié au click
 	def get_info_case(self, event):
 		
 		ligne = event.y // self.canvas_othello.nb_pixels_par_case
 		colonne = event.x // self.canvas_othello.nb_pixels_par_case
-		return (ligne, colonne)
+		return ligne, colonne
 
+	# fonction qui joue la pièce en fonction du click du joueur si aucune erreur est captée
+	#  autrement affiche un message d'erreur
 	def jouer_piece(self, event):
 
 		pos = self.get_info_case(event)
@@ -92,6 +91,7 @@ class Interphace_Othello(Tk):
 
 		return joueur_skip
 
+	# fonction qui s'occupe de changer de joueur lorsqu'on y fait appel
 	def changer_joueur(self):
 		if self.partie_othello.couleur_joueur_courant == "blanc":
 				self.partie_othello.joueur_courant = self.partie_othello.joueur_noir
@@ -100,7 +100,8 @@ class Interphace_Othello(Tk):
 			self.partie_othello.joueur_courant = self.partie_othello.joueur_blanc
 			self.partie_othello.couleur_joueur_courant = "blanc"
 	
-
+	# determine le gagnant et génère le massage qui annonce le résultat final
+	# demande à l'utilisateur s'il veut rejouer, si oui appel la fonction pour recommencer, autrement ferme l'interface
 	def Message_fin_de_partie(self):
 
 		compteur_blanc, compteur_noir = self.partie_othello.determiner_gagnant()
@@ -120,6 +121,7 @@ class Interphace_Othello(Tk):
 		else:
 			self.quit()
 
+	# reinitialise l'interface et des paramètre pour une nouvelle partie
 	def recommencer_nouvelle_partie(self):
 		self.partie_othello.planche.initialiser_planche_par_default()
 		self.partie_othello.deux_tours_passes = False
@@ -174,6 +176,7 @@ class Planche_de_jeu(Canvas):
 			self.create_text(coord_x, coord_y, text=caracteres_pieces[couleur_piece],
 							 font=('Deja Vu', self.nb_pixels_par_case//2), tags='piece')
 
+	# gere le redimenssionnement de la planche de jeu
 	def redimensionner(self, event):
 		nouvelle_taille = min(event.width, event.height)
 
